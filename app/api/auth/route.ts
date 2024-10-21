@@ -1,10 +1,8 @@
 // app/api/auth/route.ts (if using App Router)
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
-const prisma = new PrismaClient();
+import prisma from '@/app/libs/prismaClientManual';
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 export async function POST(req: Request) {
