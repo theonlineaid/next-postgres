@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Your PostgreSQL connection URL
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  userName String?  @unique
+  password String
+  layouts  Layout[] // One-to-many relationship with Layout
+
+  @@map("users")
+}
+
+model Layout {
+  id        Int           @id @default(autoincrement())
+  name      String // Layout name (e.g., "Default Layout", "Custom Layout 1")
+  user      User          @relation(fields: [userId], references: [id])
+  userId    Int
+  tables    LayoutTable[] // One-to-many relationship with LayoutTable
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("layouts")
+}
+
+model LayoutTable {
+  id            Int         @id @default(autoincrement())
+  layout        Layout      @relation(fields: [layoutId], references: [id])
+  layoutId      Int
+  systemTable   SystemTable @relation(fields: [systemTableId], references: [id])
+  systemTableId Int // Reference to the SystemTable model
+  x             Int // X position from react-grid-layout
+  y             Int // Y position from react-grid-layout
+  width         Int // Width of the table
+  height        Int // Height of the table
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("layout_tables")
+}
+
+model SystemTable {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique // Predefined table names
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  LayoutTable LayoutTable[]
+
+  @@map("system_tables")
+}
